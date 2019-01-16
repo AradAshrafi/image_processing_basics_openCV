@@ -36,3 +36,17 @@ def convert_to_gray_scale(image):
 
 def apply_gaussian_filter(image):
     return cv2.GaussianBlur(image, (5, 5), 0)
+
+
+def rotate_image(image, degrees):
+    # get image height, width
+    (h, w) = image.shape[:2
+             ]
+    # calculate the center of the image
+    center = (w / 2, h / 2)
+    scale = 1.0
+
+    # Perform the counter clockwise rotation holding at the center
+    # 90 degrees
+    M = cv2.getRotationMatrix2D(center, degrees, scale)
+    return cv2.warpAffine(image, M, (h, w))
