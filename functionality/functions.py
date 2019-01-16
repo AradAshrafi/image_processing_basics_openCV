@@ -18,3 +18,7 @@ def show_image(image):
     openCV.imshow("image", image)  # the title and path to image
     openCV.waitKey(0)  # Waits for the next key to be pressed
     openCV.destroyAllWindows()
+
+
+def convert_to_gray_scale(image):
+    return openCV.cvtColor(image, openCV.COLOR_BGR2GRAY)
