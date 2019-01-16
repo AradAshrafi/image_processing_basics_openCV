@@ -1,11 +1,12 @@
-import cv2 as openCV
+import cv2
+import numpy as np
 from lib.data_location import PICTURE_LOCATION
 from lib.data_location import VIDEO_LOCATION
 
 
 # it'll read and return test image RGB function
 def read_image():
-    return openCV.imread(PICTURE_LOCATION, 1)
+    return cv2.imread(PICTURE_LOCATION, 1)
 
 
 # it'll be filled in future
@@ -15,10 +16,17 @@ def read_video():
 
 # it'll show the image passed to it and will wait for a key to be pressed by user to exit
 def show_image(image):
-    openCV.imshow("image", image)  # the title and path to image
-    openCV.waitKey(0)  # Waits for the next key to be pressed
-    openCV.destroyAllWindows()
+    cv2.imshow("image", image)  # the title and path to image
+    cv2.waitKey(0)  # Waits for the next key to be pressed
+    cv2.destroyAllWindows()
 
 
 def convert_to_gray_scale(image):
-    return openCV.cvtColor(image, openCV.COLOR_BGR2GRAY)
+    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+
+def extract_blue_channel(image):
+    blue, green, red = cv2.split(image)
+    green[:] = 0
+    red[:] = 0
+    return cv2.merge([blue, green, red])
