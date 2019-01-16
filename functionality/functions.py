@@ -21,12 +21,18 @@ def show_image(image):
     cv2.destroyAllWindows()
 
 
-def convert_to_gray_scale(image):
-    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-
+# extract blue channel of image
 def extract_blue_channel(image):
     blue, green, red = cv2.split(image)
     green[:] = 0
     red[:] = 0
     return cv2.merge([blue, green, red])
+
+
+# convert image to gray scale
+def convert_to_gray_scale(image):
+    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+
+def apply_gaussian_filter(image):
+    return cv2.GaussianBlur(image, (5, 5), 0)
