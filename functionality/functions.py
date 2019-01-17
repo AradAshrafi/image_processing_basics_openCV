@@ -50,3 +50,11 @@ def rotate_image(image, degrees):
     # 90 degrees
     M = cv2.getRotationMatrix2D(center, degrees, scale)
     return cv2.warpAffine(image, M, (h, w))
+
+
+def resize_image(image, weight_scale, height_scale):
+    return cv2.resize(image, (0, 0), fx=weight_scale, fy=height_scale)
+
+
+def edge_detection(image):
+    pass
