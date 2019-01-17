@@ -1,4 +1,5 @@
 import cv2
+import time
 import numpy as np
 from lib.data_location import PICTURE_LOCATION
 from lib.data_location import VIDEO_LOCATION
@@ -10,9 +11,9 @@ def read_image():
     return cv2.imread(PICTURE_LOCATION, 1)
 
 
-# it'll be filled in future
-def read_video():
-    pass
+# it'll capture test video's frames
+def read_video(location=VIDEO_LOCATION):
+    return cv2.VideoCapture(location)
 
 
 # it'll show the image passed to it and will wait for a key to be pressed by user to exit
@@ -67,7 +68,28 @@ def edge_detection(image):
 
 # it'll be filled soon
 def segmentation(image):
-    pass
+    gray = convert_to_gray_scale(image=image)
+    ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    # noise removal
+    kernel = np.ones((3, 3), np.uint8)
+    opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=2)
+    # sure background area
+    sure_bg = cv2.dilate(opening, kernel, iterations=3)
+    # Finding sure foreground area
+    dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
+    ret, sure_fg = cv2.threshold(dist_transform, 0.7 * dist_transform.max(), 255, 0)
+    # Finding unknown region
+    sure_fg = np.uint8(sure_fg)
+    unknown = cv2.subtract(sure_bg, sure_fg)
+    # Marker labelling
+    ret, markers = cv2.connectedComponents(sure_fg)
+    # Add one to all labels so that sure background is not 0, but 1
+    markers = markers + 1
+    # Now, mark the region of unknown with zero
+    markers[unknown == 255] = 0
+    markers = cv2.watershed(image, markers)
+    image[markers == -1] = [255, 255, 255]
+    show_image(image=image)
 
 
 # detect faces in picture using haarcascade frontal face
@@ -94,3 +116,16 @@ def face_detection(image):
 
     cv2.imshow("Faces found", image)
     cv2.waitKey(0)
+
+
+# capture first specified frames
+def video_framing(number_of_frames=5):
+    vid_cap = read_video()
+    success = True
+    count = 0
+    while success and count < number_of_frames:
+        success, frame = vid_cap.read()
+        cv2.imshow("frame" + str(count), frame)
+        cv2.waitKey(500)
+        cv2.destroyAllWindows()
+        count += 1

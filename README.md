@@ -8,3 +8,6 @@ functionality list :
 5:rotating image
 6:resizing image
 7:edge detection
+8:segmentation
+9:face detection
+10:capture first five frames of a video file
