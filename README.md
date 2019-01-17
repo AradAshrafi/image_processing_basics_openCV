@@ -7,3 +7,4 @@ functionality list :
 4:smoothing with gaussian filter
 5:rotating image
 6:resizing image
+7:edge detection

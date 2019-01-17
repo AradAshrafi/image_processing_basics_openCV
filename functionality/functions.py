@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from lib.data_location import PICTURE_LOCATION
 from lib.data_location import VIDEO_LOCATION
+from lib.data_location import CASCADE_CLASSIFIER_LOCATION
 
 
 # it'll read and return test image RGB function
@@ -34,10 +35,12 @@ def convert_to_gray_scale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 
+# apply gaussian filter on image to smooth it
 def apply_gaussian_filter(image):
     return cv2.GaussianBlur(image, (5, 5), 0)
 
 
+# rotate image with desired degree
 def rotate_image(image, degrees):
     # get image height, width
     (h, w) = image.shape[:2
@@ -52,9 +55,42 @@ def rotate_image(image, degrees):
     return cv2.warpAffine(image, M, (h, w))
 
 
+# resize image with
 def resize_image(image, weight_scale, height_scale):
     return cv2.resize(image, (0, 0), fx=weight_scale, fy=height_scale)
 
 
+# detect edges in picture with canny edge detection
 def edge_detection(image):
+    return cv2.Canny(image, 100, 200)
+
+
+# it'll be filled soon
+def segmentation(image):
     pass
+
+
+# detect faces in picture using haarcascade frontal face
+def face_detection(image):
+    # Create the haar cascade
+    face_cascade = cv2.CascadeClassifier(CASCADE_CLASSIFIER_LOCATION)
+
+    # create gray scaled image
+    gray_scaled_image = convert_to_gray_scale(image=image)
+
+    # Detect faces in the image
+    faces = face_cascade.detectMultiScale(
+        gray_scaled_image,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30)
+        # flags = cv2.CV_HAAR_SCALE_IMAGE
+    )
+    print("Found {0} faces!".format(len(faces)))
+
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in faces:
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    cv2.imshow("Faces found", image)
+    cv2.waitKey(0)
