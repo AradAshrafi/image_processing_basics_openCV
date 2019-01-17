@@ -12,8 +12,8 @@ def read_image():
 
 
 # it'll capture test video's frames
-def read_video(location=VIDEO_LOCATION):
-    return cv2.VideoCapture(location)
+def read_video():
+    return cv2.VideoCapture(VIDEO_LOCATION)
 
 
 # it'll show the image passed to it and will wait for a key to be pressed by user to exit
@@ -44,16 +44,15 @@ def apply_gaussian_filter(image):
 # rotate image with desired degree
 def rotate_image(image, degrees):
     # get image height, width
-    (h, w) = image.shape[:2
-             ]
+    (h, w) = image.shape[:2]
     # calculate the center of the image
     center = (w / 2, h / 2)
     scale = 1.0
 
     # Perform the counter clockwise rotation holding at the center
     # 90 degrees
-    M = cv2.getRotationMatrix2D(center, degrees, scale)
-    return cv2.warpAffine(image, M, (h, w))
+    m = cv2.getRotationMatrix2D(center, degrees, scale)
+    return cv2.warpAffine(image, m, (h, w))
 
 
 # resize image with
@@ -86,10 +85,11 @@ def segmentation(image):
     # Add one to all labels so that sure background is not 0, but 1
     markers = markers + 1
     # Now, mark the region of unknown with zero
+    img = image.copy()
     markers[unknown == 255] = 0
-    markers = cv2.watershed(image, markers)
-    image[markers == -1] = [255, 255, 255]
-    show_image(image=image)
+    markers = cv2.watershed(img, markers)
+    img[markers == -1] = [255, 255, 255]
+    show_image(image=img)
 
 
 # detect faces in picture using haarcascade frontal face
@@ -119,7 +119,8 @@ def face_detection(image):
 
 
 # capture first specified frames
-def video_framing(number_of_frames=5):
+def video_framing(number_of_frames):
+    # first capture test video
     vid_cap = read_video()
     success = True
     count = 0
