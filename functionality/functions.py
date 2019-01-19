@@ -87,8 +87,10 @@ def segmentation(image):
     # Now, mark the region of unknown with zero
     img = image.copy()
     markers[unknown == 255] = 0
-    markers = cv2.watershed(img, markers)
-    img[markers == -1] = [255, 255, 255]
+    # markers = cv2.watershed(img, markers)
+    img[markers == 0] = [255, 0, 0]  # main segments :-?
+    img[markers == 1] = [0, 185, 255]  # background
+    img[markers == 2] = [230, 214, 151]
     show_image(image=img)
 
 
@@ -108,11 +110,12 @@ def face_detection(image):
         minSize=(30, 30)
         # flags = cv2.CV_HAAR_SCALE_IMAGE
     )
+    # print number of found faces
     print("Found {0} faces!".format(len(faces)))
 
     # Draw a rectangle around the faces
     for (x, y, w, h) in faces:
-        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 3)
 
     cv2.imshow("Faces found", image)
     cv2.waitKey(0)
